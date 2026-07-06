@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"bufio"
 	"context"
 	"fmt"
 	"math"
@@ -253,4 +255,28 @@ func (a *App) GetLogs(limit int) (string, error) {
 	//fmt.Printf("DEBUG: Sent %d lines to UI.\n", len(lines[start:]))
 
 	return finalLogs, nil
+}
+
+// GetLogs reads the local cura.log file and returns the last 100 lines.
+func (a *App) GetLogs() ([]string, error) {
+	file, err := os.Open("cura.log")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []string{"No logs recorded yet. Cura system active!"}, nil
+		}
+		return nil, err
+	}
+	defer file.Close()
+
+	var logs []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		logs = append(logs, scanner.Text())
+	}
+
+	if len(logs) > 100 {
+		logs = logs[len(logs)-100:]
+	}
+
+	return logs, scanner.Err()
 }

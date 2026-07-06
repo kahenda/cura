@@ -1,3 +1,4 @@
+import LogViewer from "./LogViewer";
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -149,6 +150,8 @@ function App() {
           </div>
         </div>
       )}
+    
+      <LogViewer />
     </div>
   );
 }
